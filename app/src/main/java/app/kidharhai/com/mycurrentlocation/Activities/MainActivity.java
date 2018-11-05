@@ -162,10 +162,10 @@ public class MainActivity extends AppCompatActivity {
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,Looper.myLooper());
 
                 progressBar.setVisibility(View.VISIBLE);
-               shareButton.setEnabled(true);
-                mapsButton.setEnabled(true);
-                browserButton.setEnabled(true);
-
+/*                    shareButton.setEnabled(true);
+                    mapsButton.setEnabled(true);
+                    browserButton.setEnabled(true);
+*/
             }
 
 
@@ -288,12 +288,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for(Location location:locationResult.getLocations()) {
-                    progressBar.setVisibility(View.INVISIBLE);
+
+                    shareButton.setEnabled(true);
+                    mapsButton.setEnabled(true);
+                    browserButton.setEnabled(true);
                     Toast.makeText(getApplicationContext(), String.valueOf(location.getLatitude())
                             + "/" + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
                     model.setMyLatitude(String.valueOf(location.getLatitude()));
                     model.setMyLongitude(String.valueOf(location.getLongitude()));
                     stop();
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
 
             }
