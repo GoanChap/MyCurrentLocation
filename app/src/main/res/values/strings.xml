@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Where you at?</string>
-    <string name="main_button">Tap Here</string>
+    <string name="main_button">Tap\nHere</string>
     <string name="textwarn">To continue, please provide permission</string>
     <string name="settings">Settings</string>
     <string name="action_about">About</string>
@@ -8,6 +8,6 @@
     <string name="share_button">Share with Friends</string>
     <string name="maps_button">Show on Map</string>
     <string name="browser_button">Show in Browser</string>
-    <string name="timeTextInfo">If the screen keeps loading then please walk about 50 m away from the starting location. This happens when the phone has been in one spot for too long (an hour or more)</string>
+    <string name="timeTextInfo">If the screen keeps loading then please walk about 50 m away from the starting point. This happens when the phone has been in one spot for too long (an hour or more)</string>
     <string name="splash_image_desc">splash image</string>
 </resources>

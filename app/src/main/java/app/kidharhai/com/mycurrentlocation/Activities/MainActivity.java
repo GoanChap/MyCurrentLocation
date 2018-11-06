@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -31,6 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
 
 import app.kidharhai.com.mycurrentlocation.BuildConfig;
 import app.kidharhai.com.mycurrentlocation.ModelPackage.Model;
@@ -287,23 +289,32 @@ public class MainActivity extends AppCompatActivity {
         {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                for(Location location:locationResult.getLocations()) {
+                for (Location location : locationResult.getLocations()) {
 
-                    shareButton.setEnabled(true);
-                    mapsButton.setEnabled(true);
-                    browserButton.setEnabled(true);
                     Toast.makeText(getApplicationContext(), String.valueOf(location.getLatitude())
                             + "/" + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
                     model.setMyLatitude(String.valueOf(location.getLatitude()));
                     model.setMyLongitude(String.valueOf(location.getLongitude()));
                     stop();
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
+                    disappearicon();
 
+                }
             }
         };
 
         }
+
+    private void disappearicon() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setVisibility(View.INVISIBLE);
+                shareButton.setEnabled(true);
+                mapsButton.setEnabled(true);
+                browserButton.setEnabled(true);
+            }
+        }, 3500);
+    }
 
     private void showSnackbar(final int mainTextStringId, final int actionStringId,
                               View.OnClickListener listener) {
