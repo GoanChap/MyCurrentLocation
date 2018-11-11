@@ -41,21 +41,21 @@ import app.kidharhai.com.mycurrentlocation.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button goButton;
-    Button mapsButton;
-    Button shareButton;
-    Button browserButton;
-    ProgressBar progressBar;
+    private Button goButton;
+    private Button mapsButton;
+    private Button shareButton;
+    private Button browserButton;
+    private ProgressBar progressBar;
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_CODE = 1000;
     private static String lat ="";
     private static String lng="";
 
-    FusedLocationProviderClient fusedLocationProviderClient;
-    LocationRequest locationRequest;
-    LocationCallback locationCallback;
-    MenuItem item;
-    Model model = new Model();
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+//    private MenuItem item;
+    private Model model = new Model();
 
 
     @Override
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        // Build intent that displays the App settings screen.
+                                        // Intent that displays the App settings screen.
                                         Intent intent = new Intent();
                                         intent.setAction(
                                                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        goButton.setOnClickListener(new View.OnClickListener() {
+         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -291,8 +291,8 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
 
-                    Toast.makeText(getApplicationContext(), String.valueOf(location.getLatitude())
-                            + "/" + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), String.valueOf(location.getLatitude())
+//                            + "/" + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
                     model.setMyLatitude(String.valueOf(location.getLatitude()));
                     model.setMyLongitude(String.valueOf(location.getLongitude()));
                     stop();

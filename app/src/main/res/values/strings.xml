@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Where you at?</string>
+    <string name="app_name">wya?</string>
     <string name="main_button">Tap\nHere</string>
     <string name="textwarn">To continue, please provide permission</string>
     <string name="settings">Settings</string>
