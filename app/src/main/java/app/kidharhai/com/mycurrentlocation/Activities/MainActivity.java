@@ -1,17 +1,24 @@
 package app.kidharhai.com.mycurrentlocation.Activities;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,11 +57,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1000;
     private static String lat ="";
     private static String lng="";
+    private static boolean vib = true;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-//    private MenuItem item;
     private Model model = new Model();
 
 
@@ -66,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions();
 
         } else {
-//            getLastLocation();
+
             shareButton.setEnabled(false);
             mapsButton.setEnabled(false);
             browserButton.setEnabled(false);
@@ -74,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -139,16 +145,10 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         } else {
 
-            //If permission is granted
             buildLocationRequest();
             buildLocationCallback();
-
-            //Create FusedProviderClient
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-
         }
-
 
          goButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,17 +161,17 @@ public class MainActivity extends AppCompatActivity {
                     return;
 
                 }
+                if(isLocationEnabled() == false){
+
+                  callLocationSettings();
+                }
+                vib = true;
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,Looper.myLooper());
 
                 progressBar.setVisibility(View.VISIBLE);
-/*                    shareButton.setEnabled(true);
-                    mapsButton.setEnabled(true);
-                    browserButton.setEnabled(true);
-*/
             }
 
-
-        });
+         });
 
         browserButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,17 +184,14 @@ public class MainActivity extends AppCompatActivity {
                     return;
 
                 }
+                vib = false;
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,Looper.myLooper());
-
-
                 lat = model.getMyLatitude();
                 lng = model.getMyLongitude();
                 String url = "https://www.google.com/search?q=" + lat + "," + lng ;
 
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(browserIntent);
-
-
             }
         });
 
@@ -210,8 +207,8 @@ public class MainActivity extends AppCompatActivity {
                     return;
 
                 }
+                vib = false;
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,Looper.myLooper());
-
 
                 lat = model.getMyLatitude();
                 lng = model.getMyLongitude();
@@ -219,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(browserIntent);
-
 
             }
         });
@@ -236,8 +232,8 @@ public class MainActivity extends AppCompatActivity {
                     return;
 
                 }
+                vib = false;
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,Looper.myLooper());
-
 
                 lat = model.getMyLatitude();
                 lng = model.getMyLongitude();
@@ -250,13 +246,17 @@ public class MainActivity extends AppCompatActivity {
                 if(sendIntent.resolveActivity(getPackageManager()) != null){
                     startActivity(chooser);
                 }
-
-
             }
         });
 
     }
 
+    private void callLocationSettings()
+    {
+        Toast.makeText(getApplicationContext(), "Please turn on Location information", Toast.LENGTH_LONG).show();
+            Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            this.startActivity(myIntent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -270,11 +270,9 @@ public class MainActivity extends AppCompatActivity {
         switch (id){
             case R.id.action_settings:
                 launchAboutMe();
-
                 break;
         }
         return super.onOptionsItemSelected(item);
-
     }
 
     private void launchAboutMe() {
@@ -297,7 +295,6 @@ public class MainActivity extends AppCompatActivity {
                     model.setMyLongitude(String.valueOf(location.getLongitude()));
                     stop();
                     disappearicon();
-
                 }
             }
         };
@@ -309,11 +306,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 progressBar.setVisibility(View.INVISIBLE);
+                if (vib){
+                vibrate();}
                 shareButton.setEnabled(true);
                 mapsButton.setEnabled(true);
                 browserButton.setEnabled(true);
             }
         }, 3500);
+    }
+
+    private void vibrate() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(200);
+        }
     }
 
     private void showSnackbar(final int mainTextStringId, final int actionStringId,
@@ -347,8 +354,6 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_FINE_LOCATION);
 
-        // Provide an additional rationale to the user. This would happen if the user denied the
-        // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.");
 
@@ -383,4 +388,44 @@ public class MainActivity extends AppCompatActivity {
         this.fusedLocationProviderClient.removeLocationUpdates(this.locationCallback);
     }
 
+    public boolean isLocationEnabled(){
+        LocationManager locationManager = null;
+        boolean gps_enabled= false, network_enabled = false;
+
+        if(locationManager == null)
+            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }catch (Exception ex){}
+
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }catch (Exception ex){}
+
+        return gps_enabled || network_enabled;
+    }
+
+/*    public boolean isLocationEnabled()
+    {
+        LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled= false,network_enabled = false;
+
+        if(locationManager ==null)
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        try{
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }catch(Exception ex){
+            //do nothing...
+        }
+
+        try{
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }catch(Exception ex){
+            //do nothing...
+        }
+
+        return gps_enabled || network_enabled;
+
+    }
+*/
 }

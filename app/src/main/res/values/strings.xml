@@ -10,4 +10,5 @@
     <string name="browser_button">Show in Browser</string>
     <string name="timeTextInfo">If the screen keeps loading then please walk about 50 m away from the starting point. This happens when the phone has been in one spot for too long (an hour or more)</string>
     <string name="splash_image_desc">splash image</string>
+    <string name="Cancel">Cancel</string>
 </resources>
